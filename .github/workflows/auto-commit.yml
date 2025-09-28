@@ -1,0 +1,25 @@
+name: Hourly Commit
+
+on:
+  schedule:
+    - cron: '0 * * * *'   
+  workflow_dispatch:      
+
+jobs:
+  commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Make a change
+        run: |
+          echo "Update $(date -u)" >> activity.log
+
+      - name: Commit & Push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "chore: hourly update $(date -u)" || echo "No changes"
+          git push
