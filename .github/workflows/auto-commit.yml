@@ -1,9 +1,12 @@
-name: Hourly Commit
+name: Hourly Code Commit
 
 on:
   schedule:
-    - cron: '0 * * * *'   
-  workflow_dispatch:      
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   commit:
@@ -11,15 +14,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Make a change
+      - name: Generate random code
         run: |
-          echo "Update $(date -u)" >> activity.log
-
+          mkdir -p snippets
+          echo "print('Hello $(date -u)')" > snippets/snippet_$(date -u +%Y%m%d_%H%M).py
       - name: Commit & Push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add .
-          git commit -m "chore: hourly update $(date -u)" || echo "No changes"
+          git commit -m "feat: hourly update $(date -u)" || echo "No changes"
           git push
